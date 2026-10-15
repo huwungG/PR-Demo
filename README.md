@@ -16,6 +16,7 @@ uv sync
 uv run tasktrack add "Write the lab guide"
 uv run tasktrack list
 uv run tasktrack done 1
+uv run tasktrack --help        # list all commands
 ```
 
 Data lives in `~/.tasktrack.db`.
