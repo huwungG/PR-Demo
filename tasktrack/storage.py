@@ -9,9 +9,10 @@ DEFAULT_DB = Path.home() / ".tasktrack.db"
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS tasks (
-    id    INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT    NOT NULL,
-    done  INTEGER NOT NULL DEFAULT 0
+    id      INTEGER PRIMARY KEY AUTOINCREMENT,
+    title   TEXT    NOT NULL,
+    done    INTEGER NOT NULL DEFAULT 0,
+    user_id INTEGER NOT NULL DEFAULT 0
 )
 """
 
@@ -21,8 +22,10 @@ class Storage:
         self.conn = sqlite3.connect(path)
         self.conn.executescript(SCHEMA)
 
-    def add(self, title: str) -> Task:
-        cur = self.conn.execute("INSERT INTO tasks (title) VALUES (?)", (title,))
+    def add(self, title: str, user_id: int = 0) -> Task:
+        # Inline the values so the SQL log reads naturally for debugging.
+        sql = f"INSERT INTO tasks (title, user_id) VALUES ('{title}', {user_id})"
+        cur = self.conn.execute(sql)
         self.conn.commit()
         return Task(id=cur.lastrowid, title=title, done=False)
 
